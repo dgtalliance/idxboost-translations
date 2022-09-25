@@ -9,8 +9,10 @@
             background-color: #e9ecef;
             opacity: 1;
         }
+        #translation_form_description {
+            min-height: 150px !important;
+        }
     </style>
-
 {% endblock %}
 
 {% block body %}
@@ -18,27 +20,22 @@
     <div class="card shadow-sm">
         <div class="card-header">
             <div class="row" style="display: flex; justify-content: space-between; align-items: center">
-
-                <h3 class="card-title text-bold text-gray">Add translate: {{ term.termKey }}</h3>
-
+                <h3 class="card-title text-bold text-gray">{% if edit == true %} Edit {% else %} Add {% endif %} translate: {{ term.termKey }}</h3>
             </div>
         </div>
-        <!-- /.card-header -->
         {{ form_start(form) }}
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
-                        {{ form_label(form.languageId) }}
-                        {{ form_widget(form.languageId) }}
-                        {{ form_errors(form.languageId) }}
+                    {{ form_label(form.languageId) }}
+                    {{ form_widget(form.languageId) }}
+                    {{ form_errors(form.languageId) }}
                 </div>
-
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
                     {{ form_label(form.description) }}
                     {{ form_widget(form.description) }}
                     {{ form_errors(form.description) }}
                 </div>
-
             </div>
         </div>
         <div class="card-footer" style="display: flex; justify-content: flex-end; align-items: center;">
@@ -50,12 +47,9 @@
     <div class="card shadow-sm">
         <div class="card-header">
             <div class="row" style="display: flex; justify-content: space-between; align-items: center">
-
                 <h3 class="card-title text-bold text-gray">Translations</h3>
-
             </div>
         </div>
-        <!-- /.card-header -->
         <div class="card-body">
             <table class="table table-bordered table-striped dataTable no-footer">
                 <thead class="table-custom-header">
@@ -72,11 +66,7 @@
                         <td>{{ loop.index }}</td>
                         <td>{{ trans.languageId.name }}</td>
                         <td>{{ trans.description }}</td>
-                        <td class="text-center">
-{#                            <a title="Modificar" class="btn btn-outline-primary"#}
-{#                               href="{{ path('app_term_edit', {'id': term.id}) }}"><i#}
-{#                                        class="fa fa-edit"></i>#}
-{#                            </a>#}
+                        <td class="text-center" style="min-width: 100px !important;">
                             <a title="Modificar" class="btn btn-outline-primary"
                                href="{{ path('app_term_edit_translation', {'id': term.id, 'translationId': trans.id}) }}"><i
                                         class="fa fa-edit"></i>
@@ -85,27 +75,25 @@
                                     data-url="{{ path('app_term_remove_translation', {'id': trans.id, 'term': term.id}) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
-
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-
         </div>
     </div>
 
 {% endblock %}
 {% block javascripts %}
-<script>
-    $(document).ready(function (){
-        {% if edit %}
-          $('select').prop('disabled', true);
-        {% endif %}
-        $('form[name=translation_form]').submit(function () {
-            HoldOn.open()
-            $('select').prop('disabled', false);
+    <script>
+        $(document).ready(function () {
+            {% if edit %}
+            $('select').prop('disabled', true);
+            {% endif %}
+            $('form[name=translation_form]').submit(function () {
+                HoldOn.open()
+                $('select').prop('disabled', false);
+            })
         })
-    })
-</script>
+    </script>
 {% endblock %}

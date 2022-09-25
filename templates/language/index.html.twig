@@ -29,11 +29,11 @@
                     <td>{{ language.name }}</td>
                     <td>{{ language.code }}</td>
                     <td class="text-center">
-                        <a title="Modificar" class="btn btn-outline-primary"
+                        <a data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit" class="btn btn-outline-primary"
                            href="{{ path('app_language_edit', {'id': language.id}) }}"><i
                                     class="fa fa-edit"></i>
                         </a>
-                        <button title="Eliminar" class="btn btn-danger elementRemove"
+                        <button data-toggle="tooltip" data-placcement="right" title="" data-original-title="Remove" class="btn btn-danger elementRemove"
                                 data-url="{{ path('app_language_delete', {'id': language.id}) }}">
                             <i class="fa fa-trash"></i>
                         </button>

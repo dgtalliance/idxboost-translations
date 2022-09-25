@@ -3,16 +3,12 @@
 {% block title %}Edit term{% endblock %}
 
 {% block body %}
-
     <div class="card shadow-sm">
         <div class="card-header">
             <div class="row" style="display: flex; justify-content: space-between; align-items: center">
-
                 <h3 class="card-title text-bold text-gray">Edit term</h3>
-
             </div>
         </div>
-        <!-- /.card-header -->
         {{ form_start(form) }}
         <div class="card-body">
             <div class="row">
@@ -26,7 +22,6 @@
                     {{ form_widget(form.description) }}
                     {{ form_errors(form.description) }}
                 </div>
-
             </div>
         </div>
         <div class="card-footer" style="display: flex; justify-content: flex-end; align-items: center;">
@@ -37,5 +32,4 @@
         </div>
         {{ form_end(form) }}
     </div>
-
 {% endblock %}

@@ -465,29 +465,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
                         <li class="nav-item">
-                            <a href="{{ path('app_application_index') }}" class="nav-link  text-truncate {% if 'app_application' in app.request.get('_route') %} active {% endif %}">
+                            <a href="{{ path('app_application_index') }}" class="nav-link {% if 'app_application' in app.request.get('_route') %} active {% endif %}">
                                 <i class="nav-icon fa fa-globe"></i>
-                                <span>
+                                <p>
                                   Applications
-                                </span>
+                                </p>
                             </a>
 
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ path('app_term_index') }}" class="nav-link  text-truncate {% if 'app_term' in app.request.get('_route') %} active {% endif %}">
+                            <a href="{{ path('app_term_index') }}" class="nav-link {% if 'app_term' in app.request.get('_route') %} active {% endif %}">
                                 <i class="nav-icon fa fa-file-alt"></i>
-                                <span>
+                                <p>
                                   Terms
-                                </span>
+                                </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ path('app_language_index') }}" class="nav-link  text-truncate {% if 'app_language' in app.request.get('_route') %} active {% endif %}">
+                            <a href="{{ path('app_language_index') }}" class="nav-link  {% if 'app_language' in app.request.get('_route') %} active {% endif %}">
                                 <i class="nav-icon fa fa-language"></i>
-                                <span>
+                                <p>
                                   Languages
-                                </span>
+                                </p>
                             </a>
                         </li>
 
