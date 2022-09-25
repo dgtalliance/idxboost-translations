@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List terms{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .language-badge:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+
+                <h3 class="card-title text-bold text-gray">List terms</h3>
+                <a title="Adicionar" class="btn btn-primary mr-2" href="{{ path('app_term_new') }}"><i
+                            class="fa fa-plus"></i>
+                </a>
+
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable no-footer">
+                <thead class="table-custom-header">
+                <tr>
+                    <th>Id</th>
+                    <th>Term Key</th>
+                    <th>Translations</th>
+                    <th>Description</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for term in terms %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ term.termKey }}</td>
+                        <td>
+                            {% for t in term.getTranslations %}
+                               <span class="bg-gradient-yellow text-bold ml-1 language-badge" style="padding: 5px;border-radius: 7px; color: #134679 !important;" onclick="window.location = '{{ path('app_term_edit_translation', {'id' : term.id, 'translationId' : t.id}) }}'">
+                                   {{ t.languageId.name }}
+                               </span>
+
+                            {% endfor %}
+                        </td>
+                        <td>{{ term.description }}</td>
+                        <td class="text-center">
+                            <a data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit"
+                               class="btn btn-outline-primary"
+                               href="{{ path('app_term_edit', {'id': term.id}) }}"><i
+                                        class="fa fa-edit"></i>
+                            </a>
+                            <a data-toggle="tooltip" data-placcement="right" title="" data-original-title="Translate"
+                               class="btn btn-outline-primary"
+                               href="{{ path('app_term_add_translation', {'id': term.id}) }}"><i
+                                        class="fa fa-language"></i>
+                            </a>
+                            <button data-toggle="tooltip" data-placcement="right" title="" data-original-title="Remove"
+                                    class="btn btn-danger elementRemove"
+                                    data-url="{{ path('app_term_delete', {'id': term.id}) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+{% endblock %}
