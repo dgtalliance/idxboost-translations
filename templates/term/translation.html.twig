@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add translate{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .disabled-select-idioma {
+            pointer-events: none !important;
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+
+                <h3 class="card-title text-bold text-gray">Add translate: {{ term.termKey }}</h3>
+
+            </div>
+        </div>
+        <!-- /.card-header -->
+        {{ form_start(form) }}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
+                        {{ form_label(form.languageId) }}
+                        {{ form_widget(form.languageId) }}
+                        {{ form_errors(form.languageId) }}
+                </div>
+
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer" style="display: flex; justify-content: flex-end; align-items: center;">
+            <button class="btn btn-primary btn-save-tranlation">Save</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+
+                <h3 class="card-title text-bold text-gray">Translations</h3>
+
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered table-striped dataTable no-footer">
+                <thead class="table-custom-header">
+                <tr>
+                    <th>Id</th>
+                    <th>Language</th>
+                    <th>Translate</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for trans in translations %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ trans.languageId.name }}</td>
+                        <td>{{ trans.description }}</td>
+                        <td class="text-center">
+{#                            <a title="Modificar" class="btn btn-outline-primary"#}
+{#                               href="{{ path('app_term_edit', {'id': term.id}) }}"><i#}
+{#                                        class="fa fa-edit"></i>#}
+{#                            </a>#}
+                            <a title="Modificar" class="btn btn-outline-primary"
+                               href="{{ path('app_term_edit_translation', {'id': term.id, 'translationId': trans.id}) }}"><i
+                                        class="fa fa-edit"></i>
+                            </a>
+                            <button title="Eliminar" class="btn btn-danger elementRemove"
+                                    data-url="{{ path('app_term_remove_translation', {'id': trans.id, 'term': term.id}) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+<script>
+    $(document).ready(function (){
+        {% if edit %}
+          $('select').prop('disabled', true);
+        {% endif %}
+        $('form[name=translation_form]').submit(function () {
+            HoldOn.open()
+            $('select').prop('disabled', false);
+        })
+    })
+</script>
+{% endblock %}

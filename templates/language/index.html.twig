@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List languages{% endblock %}
+
+{% block body %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+            <h3 class="card-title text-bold text-gray">List languages</h3>
+            <a title="Adicionar" class="btn btn-primary mr-2" href="{{ path('app_language_new') }}"><i
+                        class="fa fa-plus"></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable no-footer">
+            <thead class="table-custom-header">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for language in languages %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ language.name }}</td>
+                    <td>{{ language.code }}</td>
+                    <td class="text-center">
+                        <a title="Modificar" class="btn btn-outline-primary"
+                           href="{{ path('app_language_edit', {'id': language.id}) }}"><i
+                                    class="fa fa-edit"></i>
+                        </a>
+                        <button title="Eliminar" class="btn btn-danger elementRemove"
+                                data-url="{{ path('app_language_delete', {'id': language.id}) }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

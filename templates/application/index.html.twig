@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List application{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .info-box:hover .app-card-options {
+            display: block;
+        }
+        .app-card-options{
+            display: none;
+        }
+        .app-card-options > i {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+            <h3 class="card-title text-bold text-gray">List application</h3>
+            <a title="Adicionar" class="btn btn-primary mr-2" href="{{ path('app_application_new') }}"><i
+                        class="fa fa-plus"></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for item in applications %}
+                <div class="col-md-3 col-sm-6 col-12 mb-2">
+                    <div class="info-box mb-0">
+                        <span class="info-box-icon bg-info"><i class="fa fa-globe"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text font-weight-bold">{{ item.name }}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center">
+                                <span class="info-box-number text-muted">Terms: {{ item.applicationTerms | length }}</span>
+                                <div class="app-card-options">
+                                    <i class="fa fa-edit text-primary mr-1" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit" onclick="window.location = '{{ path('app_application_edit', {'id': item.id}) }}' "></i>
+                                    <i class="fa fa-trash text-danger elementRemove" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Remove" data-url="{{ path('app_application_delete', {'id': item.id}) }}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
