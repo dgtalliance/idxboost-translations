@@ -16,7 +16,7 @@
         <table class="table table-bordered table-striped dataTable no-footer">
             <thead class="table-custom-header">
             <tr>
-                <th>Id</th>
+                <th>#</th>
                 <th>Name</th>
                 <th>Code</th>
                 <th class="text-center">Actions</th>
@@ -28,7 +28,7 @@
                     <td>{{ loop.index }}</td>
                     <td>{{ language.name }}</td>
                     <td>{{ language.code }}</td>
-                    <td class="text-center">
+                    <td class="text-center"  style="width: 100px !important;">
                         <a data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit" class="btn btn-outline-primary"
                            href="{{ path('app_language_edit', {'id': language.id}) }}"><i
                                     class="fa fa-edit"></i>

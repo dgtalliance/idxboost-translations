@@ -1,0 +1,111 @@
+
+<div class="col-12">
+    <div class="row">
+        <div class="col-6 pr-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+
+                        <h3 class="card-title text-bold text-gray">All terms</h3>
+
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-striped dataTable no-footer">
+                        <thead class="table-custom-header">
+                        <tr>
+                            <th>#</th>
+                            <th>Term Key</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for t in notAsociateTerms %}
+                        <tr>
+                            <td>1</td>
+                            <td>{{ t.term_key }}</td>
+                            <td class="text-center"  style="width: 80px !important;">
+                                <button data-toggle="tooltip" data-placcement="right" title=""
+                                        data-original-title="Asociate"
+                                        class="btn btn-primary btn-asociate-aplication-term"
+                                        data-url="{{ path('app_application_asociate_term_asociate', {'application' : application.id, 'term' : t.id }) }}"
+                                        >
+                                    <i class="fa fa-arrow-right"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="col-6 pl-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+
+                        <h3 class="card-title text-bold text-gray">Asociate terms</h3>
+
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-striped dataTable no-footer">
+                        <thead class="table-custom-header">
+                        <tr>
+                            <th>#</th>
+                            <th>Term Key</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for t in asociateTerms %}
+                            <tr>
+                                <td>1</td>
+                                <td>{{ t.termId.termKey }}</td>
+                                <td class="text-center"  style="width: 80px !important;">
+                                    <button data-toggle="tooltip" data-placcement="right" title=""
+                                            data-original-title="Remove"
+                                            class="btn btn-danger btn-asociate-term-remove"
+                                            data-url="{{ path('app_application_asociate_term_remove', {'id' : t.id}) }}" >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".dataTable").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false
+    });
+
+
+
+
+
+</script>

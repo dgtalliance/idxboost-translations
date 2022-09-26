@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List terms{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .language-badge:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+
+    <div class="contrainer-data">
+
+    </div>
+
+    
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+
+
+    function loadData(){
+
+        url = '{{ path('app_application_asociate_term_data', {'id' : application.id}) }}'
+
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: url,
+            success: function (data) {
+
+                $('.contrainer-data').html(data);
+                HoldOn.close()
+            },
+            error: function (err) {
+                HoldOn.close()
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#application-name').text('Application: {{ application.name  }}')
+        HoldOn.open()
+      loadData()
+    })
+
+
+    // $(document).click('.btasdasd', function (e) {
+    //     console.log($(this).attr('id'))
+    // })
+
+    $(document).on('click','.btn-asociate-aplication-term', function () {
+        HoldOn.open()
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: $(this).data('url'),
+            success: function (data) {
+               loadData()
+
+            },
+            error: function (err) {
+                HoldOn.close()
+            }
+        });
+    })
+
+    $(document).on('click','.btn-asociate-term-remove', function () {
+        HoldOn.open()
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: $(this).data('url'),
+            success: function (data) {
+               loadData()
+
+            },
+            error: function (err) {
+                HoldOn.close()
+            }
+        });
+    })
+
+
+
+
+</script>
+
+{% endblock %}

@@ -30,7 +30,7 @@ class Language
     private $code;
 
     /**
-     * @ORM\OneToMany(targetEntity=Translation::class, mappedBy="language_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Translation::class, mappedBy="languageId", orphanRemoval=true)
      */
     private $translations;
 

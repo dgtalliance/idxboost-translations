@@ -32,11 +32,11 @@ class TranslationApiController extends AbstractController
         foreach ($languages as $lang) {
             $data[$lang->getCode()] = [];
             foreach ($id->getApplicationTerms() as $applicationTerm) {
-                $trans = $translationRepository->findBy(['term_id' => $applicationTerm->getTermId(), 'language_id' => $lang]);
+                $trans = $translationRepository->findBy(['termId' => $applicationTerm->getTermId(), 'languageId' => $lang]);
                 if (isset($trans) && !empty($trans)) {
                     $data[$lang->getCode()][$applicationTerm->getTermId()->getTermKey()] = $trans[0]->getDescription();
                 } else {
-                    $data[$lang->getCode()][$applicationTerm->getTermId()->getTermKey()] = '';
+                    $data[$lang->getCode()][$applicationTerm->getTermId()->getTermKey()] = $applicationTerm->getTermId()->getDescription() ? $applicationTerm->getTermId()->getDescription() : '' ;
                 }
             }
         }
