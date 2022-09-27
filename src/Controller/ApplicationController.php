@@ -52,7 +52,6 @@ class ApplicationController extends AbstractController
     }
 
 
-
     /**
      * @Route("/{id}/edit", name="app_application_edit", methods={"GET", "POST"})
      */
@@ -78,7 +77,7 @@ class ApplicationController extends AbstractController
      */
     public function delete(Request $request, Application $id, ApplicationRepository $applicationRepository): Response
     {
-            $applicationRepository->remove($id, true);
+        $applicationRepository->remove($id, true);
         return $this->redirectToRoute('app_application_index');
     }
 
@@ -93,16 +92,19 @@ class ApplicationController extends AbstractController
     /**
      * @Route("/asociate/term/data/{id}", name="app_application_asociate_term_data")
      */
-    public function asociateTermData(Request $request,EntityManagerInterface $em, Application $id)
+    public function asociateTermData(Request $request, EntityManagerInterface $em, Application $id)
     {
         $asociateTerms = $id->getApplicationTerms();
-
 
         $application = $id->getId();
         $RAW_QUERY = "Select te.* from term as te where te.id not in (Select term_id_id from application_term where application_id_id = $application);";
 
         $notAsociateTerms = $em->getConnection()->fetchAllAssociative($RAW_QUERY);
-        return $this->render('application/asociateTermData.html.twig', ['asociateTerms' => $asociateTerms, 'notAsociateTerms' => $notAsociateTerms, 'application' => $id]);
+        return $this->render('application/asociateTermData.html.twig', [
+            'asociateTerms' => $asociateTerms,
+            'notAsociateTerms' => $notAsociateTerms,
+            'application' => $id
+        ]);
     }
 
     /**

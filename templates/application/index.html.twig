@@ -49,7 +49,7 @@
                                 <span class="info-box-number text-muted">Terms: {{ item.applicationTerms | length }}</span>
                                 <div class="app-card-options">
                                     <i class="fa fa-edit text-primary mr-1" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit" onclick="window.location = '{{ path('app_application_edit', {'id': item.id}) }}' "></i>
-                                    <i class="fa fa-tools text-primary mr-1" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Asociate terns" onclick="window.location = '{{ path('app_application_asociate_term_index', {'id': item.id}) }}' "></i>
+                                    <i class="fa fa-tools text-primary mr-1" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Asociate terms" onclick="window.location = '{{ path('app_application_asociate_term_index', {'id': item.id}) }}' "></i>
                                     <i class="fa fa-trash text-danger elementRemove" data-toggle="tooltip" data-placcement="right" title="" data-original-title="Remove" data-url="{{ path('app_application_delete', {'id': item.id}) }}"></i>
                                 </div>
                             </div>

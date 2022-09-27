@@ -19,6 +19,7 @@ class TranslationFormType extends AbstractType
         $builder
             ->add('languageId',null, [
                 'required' => true,
+                'label' => 'Language',
                 'placeholder' => '--Select--',
                 'constraints' => [ new NotBlank()]
             ])
