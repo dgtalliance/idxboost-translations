@@ -3,12 +3,12 @@
 {% block title %}List terms{% endblock %}
 
 {% block stylesheets %}
-<style>
-    .language-badge:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
-</style>
+    <style>
+        .language-badge:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -40,16 +40,24 @@
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ term.termKey }}</td>
-                        <td>
-                            {% for t in term.getTranslations %}
-                               <span class="bg-gradient-yellow text-bold ml-1 language-badge" style="padding: 5px;border-radius: 7px; color: #134679 !important;" onclick="window.location = '{{ path('app_term_edit_translation', {'id' : term.id, 'translationId' : t.id}) }}'">
+                        <td >
+                            <div style="display: flex !important; width: 140px;  flex-wrap: wrap;">
+                                {% for t in term.getTranslations %}
+                                    <div style="margin-bottom: 12px !important;">
+                                    <span class="bg-gradient-yellow text-bold ml-1  language-badge"
+                                          style="padding: 5px;border-radius: 7px; color: #134679 !important;"
+                                          onclick="window.location = '{{ path('app_term_edit_translation', {'id' : term.id, 'translationId' : t.id}) }}'">
                                    {{ t.languageId.name }}
-                               </span>
+                                   </span>
+                                    </div>
 
-                            {% endfor %}
+
+                                {% endfor %}
+                            </div>
+
                         </td>
                         <td>{{ term.description }}</td>
-                        <td class="text-center">
+                        <td class="text-center" style="width: 150px !important;">
                             <a data-toggle="tooltip" data-placcement="right" title="" data-original-title="Edit"
                                class="btn btn-outline-primary"
                                href="{{ path('app_term_edit', {'id': term.id}) }}"><i

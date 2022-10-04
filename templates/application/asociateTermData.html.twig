@@ -23,7 +23,7 @@
                         <tbody>
                         {% for t in notAsociateTerms %}
                         <tr>
-                            <td>1</td>
+                            <td style="width: 10px !important;">{{ loop.index }}</td>
                             <td>{{ t.term_key }}</td>
                             <td class="text-center"  style="width: 100px !important;">
                                 <button data-toggle="tooltip" data-placcement="right" title=""
@@ -78,7 +78,7 @@
                         <tbody>
                         {% for t in asociateTerms %}
                             <tr>
-                                <td>1</td>
+                                <td style="width: 10px !important;">{{ loop.index }}</td>
                                 <td>{{ t.termId.termKey }}</td>
                                 <td class="text-center"  style="width: 100px !important;">
                                     <button data-toggle="tooltip" data-placcement="right" title=""

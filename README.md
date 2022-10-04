@@ -1,5 +1,11 @@
 # idxboost-translations
 
+## Requirements...
+```
+ PHP: 7.4.19
+ MySql: 5.7.33
+```
+
 ## How to start...
 
 ```
