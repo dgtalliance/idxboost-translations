@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/translation/api")
+ * @Route("/api/translation")
  */
 class TranslationApiController extends AbstractController
 {
@@ -41,8 +41,7 @@ class TranslationApiController extends AbstractController
             }
         }
 
-        dump($data);
-        die();
+
         return new Response(json_encode($data));
 
     }

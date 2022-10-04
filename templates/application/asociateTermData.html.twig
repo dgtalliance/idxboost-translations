@@ -12,7 +12,7 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-striped dataTable no-footer">
+                    <table class="table table-bordered table-striped dataTable-data no-footer">
                         <thead class="table-custom-header">
                         <tr>
                             <th>#</th>
@@ -25,7 +25,14 @@
                         <tr>
                             <td>1</td>
                             <td>{{ t.term_key }}</td>
-                            <td class="text-center"  style="width: 80px !important;">
+                            <td class="text-center"  style="width: 100px !important;">
+                                <button data-toggle="tooltip" data-placcement="right" title=""
+                                        data-original-title="Details"
+                                        class="btn btn-primary btn-details-aplication-term"
+                                        data-url="{{ path('app_application_term_details', {'id': t.id }) }}"
+                                >
+                                    <i class="fa fa-file-alt"></i>
+                                </button>
                                 <button data-toggle="tooltip" data-placcement="right" title=""
                                         data-original-title="Asociate"
                                         class="btn btn-primary btn-asociate-aplication-term"
@@ -60,7 +67,7 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-striped dataTable no-footer">
+                    <table class="table table-bordered table-striped dataTable-data no-footer">
                         <thead class="table-custom-header">
                         <tr>
                             <th>#</th>
@@ -73,7 +80,14 @@
                             <tr>
                                 <td>1</td>
                                 <td>{{ t.termId.termKey }}</td>
-                                <td class="text-center"  style="width: 80px !important;">
+                                <td class="text-center"  style="width: 100px !important;">
+                                    <button data-toggle="tooltip" data-placcement="right" title=""
+                                            data-original-title="Details"
+                                            class="btn btn-primary btn-details-aplication-term"
+                                            data-url="{{ path('app_application_term_details', {'id': t.termId.id }) }}"
+                                    >
+                                        <i class="fa fa-file-alt"></i>
+                                    </button>
                                     <button data-toggle="tooltip" data-placcement="right" title=""
                                             data-original-title="Remove"
                                             class="btn btn-danger btn-asociate-term-remove"
@@ -99,13 +113,11 @@
     </div>
 </div>
 
+
+
+
 <script>
-    $(".dataTable").DataTable({
+    $(".dataTable-data").DataTable({
         "responsive": true, "lengthChange": true, "autoWidth": false
     });
-
-
-
-
-
 </script>

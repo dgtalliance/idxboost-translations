@@ -1,0 +1,38 @@
+<div class="shadow-sm" style="padding: 10px; border-radius: 7px; background-color: #8080800f;">
+    <h5 class="text-muted font-weight-bold">Term: {{ term.termKey }}</h5>
+    <h5 class="text-muted">Description:</h5>
+    <p class=" mb-0">{{ term.description }}</p>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header">
+        <div class="row" style="display: flex; justify-content: space-between; align-items: center">
+            <h3 class="card-title text-bold text-gray">Translations</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped dataTable-detail no-footer">
+            <thead class="table-custom-header">
+            <tr>
+                <th>#</th>
+                <th>Language</th>
+                <th>Translate</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trans in term.translations %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ trans.languageId.name }}</td>
+                    <td>{{ trans.description }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(".dataTable-detail").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false
+    });
+</script>

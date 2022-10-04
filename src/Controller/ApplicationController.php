@@ -130,5 +130,13 @@ class ApplicationController extends AbstractController
         return new Response(json_encode(['status' => 200]));
     }
 
+    /**
+     * @Route("/term/details/{id}", name="app_application_term_details")
+     */
+    public function termDetail(EntityManagerInterface $entityManager, Term $id)
+    {
+        return $this->render('application/appTermDetail.html.twig', ['term' => $id] );
+    }
+
 
 }

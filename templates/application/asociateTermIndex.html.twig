@@ -18,81 +18,121 @@
 
     </div>
 
-    
+    <div class="modal fade" id="modal-overlay">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-muted">Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
 
 
 
 {% endblock %}
 
 {% block javascripts %}
-<script>
+    <script>
 
 
-    function loadData(){
+        function loadData() {
 
-        url = '{{ path('app_application_asociate_term_data', {'id' : application.id}) }}'
+            url = '{{ path('app_application_asociate_term_data', {'id' : application.id}) }}'
 
-        $.ajax({
-            type: "GET",
-            cache: false,
-            url: url,
-            success: function (data) {
+            $.ajax({
+                type: "GET",
+                cache: false,
+                url: url,
+                success: function (data) {
 
-                $('.contrainer-data').html(data);
-                HoldOn.close()
-            },
-            error: function (err) {
-                HoldOn.close()
-            }
-        });
-    }
+                    $('.contrainer-data').html(data);
+                    HoldOn.close()
+                },
+                error: function (err) {
+                    HoldOn.close()
+                }
+            });
+        }
 
-    $(document).ready(function () {
-        $('#application-name').text('Application: {{ application.name  }}')
-        HoldOn.open()
-      loadData()
-    })
-
-
-    // $(document).click('.btasdasd', function (e) {
-    //     console.log($(this).attr('id'))
-    // })
-
-    $(document).on('click','.btn-asociate-aplication-term', function () {
-        HoldOn.open()
-        $.ajax({
-            type: "POST",
-            cache: false,
-            url: $(this).data('url'),
-            success: function (data) {
-               loadData()
-
-            },
-            error: function (err) {
-                HoldOn.close()
-            }
-        });
-    })
-
-    $(document).on('click','.btn-asociate-term-remove', function () {
-        HoldOn.open()
-        $.ajax({
-            type: "POST",
-            cache: false,
-            url: $(this).data('url'),
-            success: function (data) {
-               loadData()
-
-            },
-            error: function (err) {
-                HoldOn.close()
-            }
-        });
-    })
+        $(document).ready(function () {
+            $('#application-name').text('Application: {{ application.name }}')
+            HoldOn.open()
+            loadData()
+        })
 
 
+        // $(document).click('.btasdasd', function (e) {
+        //     console.log($(this).attr('id'))
+        // })
+
+        $(document).on('click', '.btn-asociate-aplication-term', function () {
+            HoldOn.open()
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: $(this).data('url'),
+                success: function (data) {
+                    loadData()
+
+                },
+                error: function (err) {
+                    HoldOn.close()
+                }
+            });
+        })
 
 
-</script>
+        $(document).on('click', '.btn-details-aplication-term', function () {
+
+
+            HoldOn.open()
+            $.ajax({
+                type: "GET",
+                cache: false,
+                url: $(this).data('url'),
+                dataType: 'html',
+                success: function (data) {
+                  $('.modal-body').html(data);
+                    $('#modal-overlay').modal('show')
+                  HoldOn.close();
+                },
+                error: function (err) {
+                    HoldOn.close()
+                }
+            });
+        })
+
+        $(document).on('click', '.btn-asociate-term-remove', function () {
+            HoldOn.open()
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: $(this).data('url'),
+                success: function (data) {
+                    loadData()
+
+                },
+                error: function (err) {
+                    HoldOn.close()
+                }
+            });
+        })
+
+
+    </script>
 
 {% endblock %}
