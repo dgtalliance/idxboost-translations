@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Application;
 use App\Entity\Language;
 use App\Entity\Term;
+use App\Repository\ApplicationRepository;
 use App\Repository\LanguageRepository;
 use App\Repository\TranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,9 +41,39 @@ class TranslationApiController extends AbstractController
                 }
             }
         }
+        return new Response(json_encode($data));
+    }
 
+
+    /**
+     * @Route("/translations_by_application_and_language/{applicationId}/{code}", name="translations_by_application_and_language")
+     * @param EntityManagerInterface $entityManager
+     * @param TranslationRepository $translationRepository
+     * @param LanguageRepository $languageRepository
+     * @return Response
+     */
+    public function translationsByApplicationAndLanguage(EntityManagerInterface $entityManager, TranslationRepository $translationRepository,ApplicationRepository $applicationRepository,LanguageRepository $languageRepository, $applicationId = null, $code = null): Response
+    {
+        $data = [];
+
+        $language = $languageRepository->findBy(['code' => $code]);
+        $application = $applicationRepository->find($applicationId);
+
+        if(isset($language[0]) and !empty($language[0]) and isset($application) and !empty($application)){
+            $data['status'] = 200;
+            foreach ($application->getApplicationTerms() as $applicationTerm) {
+                $trans = $translationRepository->findBy(['termId' => $applicationTerm->getTermId(), 'languageId' => $language[0]->getId()]);
+                if (isset($trans) && !empty($trans)) {
+                    $data['data'][$applicationTerm->getTermId()->getTermKey()] = $trans[0]->getDescription();
+                } else {
+                    $data['data'][$applicationTerm->getTermId()->getTermKey()] = $applicationTerm->getTermId()->getDescription() ? $applicationTerm->getTermId()->getDescription() : '' ;
+                }
+            }
+        }else{
+            $data['status'] = 403;
+            $data['data'] = 'Incorrect parameters';
+        }
 
         return new Response(json_encode($data));
-
     }
 }
