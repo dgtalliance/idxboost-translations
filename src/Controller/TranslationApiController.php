@@ -61,6 +61,7 @@ class TranslationApiController extends AbstractController
 
         if(isset($language[0]) and !empty($language[0]) and isset($application) and !empty($application)){
             $data['status'] = 200;
+            $data['data'] = [];
             foreach ($application->getApplicationTerms() as $applicationTerm) {
                 $trans = $translationRepository->findBy(['termId' => $applicationTerm->getTermId(), 'languageId' => $language[0]->getId()]);
                 if (isset($trans) && !empty($trans)) {
