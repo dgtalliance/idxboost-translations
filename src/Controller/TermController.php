@@ -6,6 +6,7 @@ use App\Entity\Term;
 use App\Entity\Translation;
 use App\Form\TermType;
 use App\Form\TranslationFormType;
+use App\Repository\LanguageRepository;
 use App\Repository\TermRepository;
 use App\Repository\TranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,10 +23,13 @@ class TermController extends AbstractController
     /**
      * @Route("/", name="app_term_index", methods={"GET"})
      */
-    public function index(TermRepository $termRepository): Response
+    public function index(TermRepository $termRepository, LanguageRepository $languageRepository): Response
     {
+        $languages = $languageRepository->findAll();
+
         return $this->render('term/index.html.twig', [
             'terms' => $termRepository->findAll(),
+            'languages' => $languages
         ]);
     }
 
