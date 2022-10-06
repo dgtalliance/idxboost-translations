@@ -409,13 +409,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {# <i class="fas fa-expand-arrows-alt"></i> #}
             {# </a> #}
             {# </li> #}
-            {% if app.user?.username %}
+
                 <li class="nav-item">
                     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                       User: {{ app.user.username }}
+                       User: {{ app.user.roles }}
                     </a>
                 </li>
-            {%  endif %}
+
 {#            <li class="nav-item">#}
 {#                <a class="nav-link sid" data-widget="control-sidebar" data-slide="true" href="#" role="button">#}
 {#                    <i class="fas fa-ellipsis-v"></i>#}
