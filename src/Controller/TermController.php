@@ -11,6 +11,7 @@ use App\Repository\TermRepository;
 use App\Repository\TranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,6 +29,8 @@ class TermController extends AbstractController
         $languages = $languageRepository->findAll();
         $terms = $termRepository->findBy([], ['termKey' => 'ASC']);
         $termsFilter = [];
+
+
 
         if($request->request->get('languageFilter')){
 //           dump($request->request->get('languageFilter'));
@@ -199,5 +202,83 @@ class TermController extends AbstractController
     {
         $translationRepository->remove($id, true);
         return $this->redirectToRoute('app_term_add_translation', ['id' => $term->getId()]);
+    }
+
+    /**
+     * @Route("/load/terms", name="app_term_load_terms", methods={"GET", "POST"})
+     */
+    public function loadTerms(EntityManagerInterface $entityManager){
+
+        $fichero = fopen('translate/es_ES.po', 'r');
+        $termKeyText = '';
+        $termTransText = '';
+        $count = 0;
+
+        while (!feof($fichero)){
+            $linea = fgets($fichero);
+            if($linea != "\n" && substr($linea, 0, 1) != '#' and $linea != false){
+                if(strpos($linea, 'msgid') !== false){
+                    if($count == 0){
+                        $count = 1;
+                        $termKeyText = $termKeyText . $linea;
+                    }
+                    if($count == 2){
+                       $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
+                        $count = 1;
+                        $termKeyText = $linea;
+                        $termTransText = '';
+                    }
+                }else{
+                    if($count == 1 and strpos($linea, 'msgstr') === false){
+                        $termKeyText = $termKeyText . $linea;
+                    }
+                }
+
+                if(strpos($linea, 'msgstr') !== false){
+                    if($count == 1){
+                        $termTransText = $termTransText . $linea;
+                        $count = 2;
+                    }
+                }else{
+                    if($count == 2 and strpos($linea, 'msgid') === false){
+                        $termTransText = $termTransText . $linea;
+                    }
+                }
+            }
+            if ($linea === false){
+                $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
+            }
+        }
+
+       return $this->redirectToRoute('app_term_index');
+    }
+
+
+    private function saveNewTermLoad($termKeyText, $termTransText, $entityManager){
+        $term = new Term();
+
+        $exp_regular = array();
+        $exp_regular[0] = '/msgid/';
+        $exp_regular[1] = '/\n/';
+
+        $result = preg_replace($exp_regular,"", $termKeyText);
+        $result = str_replace('"', '', $result);
+        if(strlen($result) > 50){
+            $result = substr($result,  0, 50);
+        }
+        $term->setTermKey($result);
+
+
+        $exp_regular = array();
+        $exp_regular[0] = '/msgstr/';
+        $exp_regular[1] = '/\n/';
+
+        $result = preg_replace($exp_regular,"", $termTransText);
+        $result = str_replace('"', '', $result);
+
+        $term->setDescription($result);
+
+        $entityManager->persist($term);
+        $entityManager->flush();
     }
 }
