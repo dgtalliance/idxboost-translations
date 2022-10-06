@@ -21,16 +21,50 @@ use Symfony\Component\Routing\Annotation\Route;
 class TermController extends AbstractController
 {
     /**
-     * @Route("/", name="app_term_index", methods={"GET"})
+     * @Route("/", name="app_term_index", methods={"GET", "POST"})
      */
-    public function index(TermRepository $termRepository, LanguageRepository $languageRepository): Response
+    public function index(Request $request,TermRepository $termRepository, LanguageRepository $languageRepository): Response
     {
         $languages = $languageRepository->findAll();
+        $terms = $termRepository->findBy([], ['termKey' => 'ASC']);
+        $termsFilter = [];
+
+        if($request->request->get('languageFilter')){
+//           dump($request->request->get('languageFilter'));
+//           die();
+            foreach ($terms as $term){
+                $translations = $this->getTranslationsArrayIDByTerm($term->getTranslations());
+
+                $cumple = true;
+                foreach ($request->request->get('languageFilter') as $lId){
+                    if(!in_array(intval($lId), $translations)){
+                        $cumple = false;
+                        break;
+                    }
+                }
+                if($cumple){
+                    $termsFilter[] = $term;
+                }
+            }
+        }else{
+            $termsFilter = $terms;
+        }
 
         return $this->render('term/index.html.twig', [
-            'terms' => $termRepository->findAll(),
-            'languages' => $languages
+            'terms' => $termsFilter,
+            'languages' => $languages,
+            'select' => json_encode($request->request->get('languageFilter'))
         ]);
+    }
+
+
+    public function getTranslationsArrayIDByTerm($translations){
+        $translationsID = [];
+        foreach ($translations as $translation){
+            $translationsID[] = $translation->getLanguageId()->getId();
+        }
+
+        return $translationsID;
     }
 
     /**

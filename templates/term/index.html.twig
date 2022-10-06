@@ -25,6 +25,21 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+            <form name="filter" method="post" id="formFilter">
+                <div class="col-4 pl-0 mb-4 form-group">
+                    <label class="text-muted" for="languageFilter">Language</label>
+                    <select name="languageFilter[]" id="languageFilter" multiple>
+
+                        {% for language in languages %}
+                            <option value="{{ language.id }}">{{ language.name }}</option>
+                        {% endfor %}
+
+                    </select>
+
+
+                </div>
+            </form>
+
             <table class="table table-bordered table-striped dataTable no-footer">
                 <thead class="table-custom-header">
                 <tr>
@@ -40,7 +55,7 @@
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ term.termKey }}</td>
-                        <td >
+                        <td>
                             <div style="display: flex !important; width: 140px;  flex-wrap: wrap;">
                                 {% for t in term.getTranslations %}
                                     <div style="margin-bottom: 12px !important;">
@@ -84,4 +99,21 @@
     </div>
 
 
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+
+        $(document).ready(function () {
+
+            $("#languageFilter").val(JSON.parse('{{ select | raw }}'));
+
+            $('#languageFilter').change(function () {
+              $('#formFilter').submit();
+
+            })
+
+        })
+
+    </script>
 {% endblock %}

@@ -97,7 +97,7 @@ class ApplicationController extends AbstractController
         $asociateTerms = $id->getApplicationTerms();
 
         $application = $id->getId();
-        $RAW_QUERY = "Select te.* from term as te where te.id not in (Select term_id_id from application_term where application_id_id = $application);";
+        $RAW_QUERY = "Select te.* from term as te where te.id not in (Select term_id_id from application_term where application_id_id = $application) order by term_key ASC ;";
 
         $notAsociateTerms = $em->getConnection()->fetchAllAssociative($RAW_QUERY);
         return $this->render('application/asociateTermData.html.twig', [
