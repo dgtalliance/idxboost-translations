@@ -409,7 +409,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {# <i class="fas fa-expand-arrows-alt"></i> #}
             {# </a> #}
             {# </li> #}
-            {% if app.user %}
+            {% if app.user?.username %}
                 <li class="nav-item">
                     <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                        User: {{ app.user.username }}
