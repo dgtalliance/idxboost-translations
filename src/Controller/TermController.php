@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Term;
 use App\Entity\Translation;
+use App\Form\LoadTermsType;
 use App\Form\TermType;
 use App\Form\TranslationFormType;
 use App\Repository\LanguageRepository;
@@ -24,46 +25,66 @@ class TermController extends AbstractController
     /**
      * @Route("/", name="app_term_index", methods={"GET", "POST"})
      */
-    public function index(Request $request,TermRepository $termRepository, LanguageRepository $languageRepository): Response
+    public function index(Request $request, TermRepository $termRepository, LanguageRepository $languageRepository): Response
     {
         $languages = $languageRepository->findAll();
         $terms = $termRepository->findBy([], ['termKey' => 'ASC']);
         $termsFilter = [];
 
 
+        $form = $this->createForm(LoadTermsType::class);
+        $form->handleRequest($request);
 
-        if($request->request->get('languageFilter')){
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!empty($form['translationFile']->getData())) {
+                if (file_exists('translate/translate.po')) {
+                    unlink('translate/translate.po');
+                }
+
+                $file = $form['translationFile']->getData();
+                $ext = $file->guessExtension();
+                $file_name = 'translate' . "." . $ext;
+                $file->move("translate", $file_name);
+
+                return $this->redirectToRoute('app_term_load_terms');
+            }
+        }
+
+
+        if ($request->request->get('languageFilter')) {
 //           dump($request->request->get('languageFilter'));
 //           die();
-            foreach ($terms as $term){
+            foreach ($terms as $term) {
                 $translations = $this->getTranslationsArrayIDByTerm($term->getTranslations());
 
                 $cumple = true;
-                foreach ($request->request->get('languageFilter') as $lId){
-                    if(!in_array(intval($lId), $translations)){
+                foreach ($request->request->get('languageFilter') as $lId) {
+                    if (!in_array(intval($lId), $translations)) {
                         $cumple = false;
                         break;
                     }
                 }
-                if($cumple){
+                if ($cumple) {
                     $termsFilter[] = $term;
                 }
             }
-        }else{
+        } else {
             $termsFilter = $terms;
         }
 
         return $this->render('term/index.html.twig', [
             'terms' => $termsFilter,
+            'form' => $form->createView(),
             'languages' => $languages,
             'select' => json_encode($request->request->get('languageFilter'))
         ]);
     }
 
 
-    public function getTranslationsArrayIDByTerm($translations){
+    public function getTranslationsArrayIDByTerm($translations)
+    {
         $translationsID = [];
-        foreach ($translations as $translation){
+        foreach ($translations as $translation) {
             $translationsID[] = $translation->getLanguageId()->getId();
         }
 
@@ -92,7 +113,6 @@ class TermController extends AbstractController
     }
 
 
-
     /**
      * @Route("/{id}/edit", name="app_term_edit", methods={"GET", "POST"})
      */
@@ -119,7 +139,7 @@ class TermController extends AbstractController
     public function delete(Request $request, Term $id, TermRepository $termRepository): Response
     {
 
-            $termRepository->remove($id, true);
+        $termRepository->remove($id, true);
 
 
         return $this->redirectToRoute('app_term_index');
@@ -138,11 +158,11 @@ class TermController extends AbstractController
 
             $existTranslation = $translationRepository->findBy(['termId' => $id->getId(), 'languageId' => $form->get('languageId')->getData()]);
 
-            if(isset($existTranslation) and !empty($existTranslation)){
+            if (isset($existTranslation) and !empty($existTranslation)) {
                 $this->addFlash('error', 'There is already a translation for this language');
 
                 return $this->redirectToRoute('app_term_add_translation', ['id' => $id->getId()], Response::HTTP_SEE_OTHER);
-            }else{
+            } else {
                 $translation->setTermId($id);
                 $translationRepository->add($translation, true);
 
@@ -158,7 +178,7 @@ class TermController extends AbstractController
 
         return $this->renderForm('term/translation.html.twig', [
             'translation' => $translation,
-             'term' => $id,
+            'term' => $id,
             'translations' => $translations,
             'form' => $form,
             'edit' => false
@@ -173,7 +193,6 @@ class TermController extends AbstractController
         $translation = $translationId;
         $form = $this->createForm(TranslationFormType::class, $translation);
         $form->handleRequest($request);
-
 
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -207,64 +226,66 @@ class TermController extends AbstractController
     /**
      * @Route("/load/terms", name="app_term_load_terms", methods={"GET", "POST"})
      */
-    public function loadTerms(EntityManagerInterface $entityManager){
+    public function loadTerms(EntityManagerInterface $entityManager)
+    {
 
-        $fichero = fopen('translate/es_ES.po', 'r');
+        $fichero = fopen('translate/translate.po', 'r');
         $termKeyText = '';
         $termTransText = '';
         $count = 0;
 
-        while (!feof($fichero)){
+        while (!feof($fichero)) {
             $linea = fgets($fichero);
-            if($linea != "\n" && substr($linea, 0, 1) != '#' and $linea != false){
-                if(strpos($linea, 'msgid') !== false){
-                    if($count == 0){
+            if ($linea != "\n" && substr($linea, 0, 1) != '#' and $linea != false) {
+                if (strpos($linea, 'msgid') !== false) {
+                    if ($count == 0) {
                         $count = 1;
                         $termKeyText = $termKeyText . $linea;
                     }
-                    if($count == 2){
-                       $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
+                    if ($count == 2) {
+                        $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
                         $count = 1;
                         $termKeyText = $linea;
                         $termTransText = '';
                     }
-                }else{
-                    if($count == 1 and strpos($linea, 'msgstr') === false){
+                } else {
+                    if ($count == 1 and strpos($linea, 'msgstr') === false) {
                         $termKeyText = $termKeyText . $linea;
                     }
                 }
 
-                if(strpos($linea, 'msgstr') !== false){
-                    if($count == 1){
+                if (strpos($linea, 'msgstr') !== false) {
+                    if ($count == 1) {
                         $termTransText = $termTransText . $linea;
                         $count = 2;
                     }
-                }else{
-                    if($count == 2 and strpos($linea, 'msgid') === false){
+                } else {
+                    if ($count == 2 and strpos($linea, 'msgid') === false) {
                         $termTransText = $termTransText . $linea;
                     }
                 }
             }
-            if ($linea === false){
+            if ($linea === false) {
                 $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
             }
         }
 
-       return $this->redirectToRoute('app_term_index');
+        return $this->redirectToRoute('app_term_index');
     }
 
 
-    private function saveNewTermLoad($termKeyText, $termTransText, $entityManager){
+    private function saveNewTermLoad($termKeyText, $termTransText, $entityManager)
+    {
         $term = new Term();
 
         $exp_regular = array();
         $exp_regular[0] = '/msgid/';
         $exp_regular[1] = '/\n/';
 
-        $result = preg_replace($exp_regular,"", $termKeyText);
+        $result = preg_replace($exp_regular, "", $termKeyText);
         $result = str_replace('"', '', $result);
-        if(strlen($result) > 50){
-            $result = substr($result,  0, 50);
+        if (strlen($result) > 50) {
+            $result = substr($result, 0, 50);
         }
         $term->setTermKey($result);
 
@@ -273,7 +294,7 @@ class TermController extends AbstractController
         $exp_regular[0] = '/msgstr/';
         $exp_regular[1] = '/\n/';
 
-        $result = preg_replace($exp_regular,"", $termTransText);
+        $result = preg_replace($exp_regular, "", $termTransText);
         $result = str_replace('"', '', $result);
 
         $term->setDescription($result);

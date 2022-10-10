@@ -17,19 +17,20 @@
             <div class="row" style="display: flex; justify-content: space-between; align-items: center">
 
                 <h3 class="card-title text-bold text-gray">List terms</h3>
-               <div>
-                   <a title="Adicionar" class="btn btn-primary mr-2" href="{{ path('app_term_new') }}"><i
-                               class="fa fa-plus"></i>
-                   </a>
-                   <a title="Load" class="btn btn-primary mr-2" href="{{ path('app_term_load_terms') }}"><i
-                               class="fa fa-upload"></i>
-                   </a>
-               </div>
+                <div>
+                    <a title="Adicionar" class="btn btn-primary mr-2" href="{{ path('app_term_new') }}"><i
+                                class="fa fa-plus"></i>
+                    </a>
+                    <a title="Load" class="btn btn-primary mr-2" data-toggle="modal" data-target="#loadTermsModal"><i
+                                class="fa fa-upload"></i>
+                    </a>
+                </div>
 
             </div>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+
             <form name="filter" method="post" id="formFilter">
                 <div class="col-4 pl-0 mb-4 form-group">
                     <label class="text-muted" for="languageFilter">Language</label>
@@ -104,6 +105,46 @@
     </div>
 
 
+    <div class="modal fade" id="loadTermsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Load translation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(form) }}
+                <div class="modal-body">
+
+
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
+                            {{ form_label(form.language) }}
+                            {{ form_widget(form.language) }}
+                            {{ form_errors(form.language) }}
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 form-group">
+                            {{ form_label(form.translationFile) }}
+                            {{ form_widget(form.translationFile) }}
+                            {{ form_errors(form.translationFile) }}
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Load</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 {% block javascripts %}
@@ -111,10 +152,26 @@
 
         $(document).ready(function () {
 
+            $("#load_terms_translationFile").on('change', function () {
+                //Get count of selected files
+                var countFiles = $(this)[0].files.length;
+                var path = $(this)[0].value;
+                console.log(path)
+
+                $('.custom-file-label').text(path)
+
+
+
+            });
+
+            {% if form_errors(form.translationFile) %}
+               $('#loadTermsModal').modal('show')
+            {% endif %}
+
             $("#languageFilter").val(JSON.parse('{{ select | raw }}'));
 
             $('#languageFilter').change(function () {
-              $('#formFilter').submit();
+                $('#formFilter').submit();
 
             })
 
