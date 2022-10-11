@@ -110,7 +110,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Load translation</h5>
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Load translation</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -136,7 +136,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                     <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Load</button>
                 </div>
                 {{ form_end(form) }}
@@ -163,6 +163,10 @@
 
 
             });
+
+            $('form[name=load_terms]').on('submit', function () {
+               HoldOn.open()
+            })
 
             {% if form_errors(form.translationFile) %}
                $('#loadTermsModal').modal('show')
