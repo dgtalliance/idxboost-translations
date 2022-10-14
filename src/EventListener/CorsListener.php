@@ -52,7 +52,7 @@ final class CorsListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event): void
     {
         // Don't do anything if it's not the master request.
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -60,7 +60,7 @@ final class CorsListener implements EventSubscriberInterface
         if ($response) {
             $response->headers->set('Access-Control-Allow-Origin', '*');
             $response->headers->set('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH');
-            $response->headers->set('Access-Control-Allow-Headers', 'content-type');
+            $response->headers->set('Access-Control-Allow-Headers', 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With');
         }
     }
 }
