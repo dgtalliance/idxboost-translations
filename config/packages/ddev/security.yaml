@@ -25,7 +25,7 @@ security:
     access_control:
 #         - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 #         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
 when@test:
     security:
