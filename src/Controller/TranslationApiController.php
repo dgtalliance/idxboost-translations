@@ -46,7 +46,10 @@ class TranslationApiController extends AbstractController
      * @Route("/translations_by_application_and_language/{applicationId}/{code}", name="translations_by_application_and_language")
      * @param EntityManagerInterface $entityManager
      * @param TranslationRepository $translationRepository
+     * @param ApplicationRepository $applicationRepository
      * @param LanguageRepository $languageRepository
+     * @param null $applicationId
+     * @param null $code
      * @return Response
      */
     public function translationsByApplicationAndLanguage(EntityManagerInterface $entityManager, TranslationRepository $translationRepository,ApplicationRepository $applicationRepository,LanguageRepository $languageRepository, $applicationId = null, $code = null): Response
