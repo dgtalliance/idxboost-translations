@@ -596,11 +596,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
     $(document).ready(function () {
+        $('select').select2()
         $(".dataTable").DataTable({
             "responsive": true, "lengthChange": true, "autoWidth": false
         });
 
-        $('select').select2()
+
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
