@@ -20,6 +20,8 @@ class LanguageController extends AbstractController
 {
     /**
      * @Route("/", name="app_language_index", methods={"GET"})
+     * @param LanguageRepository $languageRepository
+     * @return Response
      */
     public function index(LanguageRepository $languageRepository): Response
     {
@@ -30,6 +32,9 @@ class LanguageController extends AbstractController
 
     /**
      * @Route("/new", name="app_language_new", methods={"GET", "POST"})
+     * @param Request $request
+     * @param LanguageRepository $languageRepository
+     * @return Response
      */
     public function new(Request $request, LanguageRepository $languageRepository): Response
     {
@@ -50,9 +55,12 @@ class LanguageController extends AbstractController
     }
 
 
-
     /**
      * @Route("/{id}/edit", name="app_language_edit", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Language $language
+     * @param LanguageRepository $languageRepository
+     * @return Response
      */
     public function edit(Request $request, Language $language, LanguageRepository $languageRepository): Response
     {
@@ -73,12 +81,13 @@ class LanguageController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="app_language_delete")
+     * @param Language $id
+     * @param LanguageRepository $languageRepository
+     * @return Response
      */
-    public function delete(Request $request, Language $id, LanguageRepository $languageRepository): Response
+    public function delete(Language $id, LanguageRepository $languageRepository): Response
     {
-
-            $languageRepository->remove($id, true);
-
+        $languageRepository->remove($id, true);
 
         return $this->redirectToRoute('app_language_index');
     }
