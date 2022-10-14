@@ -70,8 +70,7 @@ class TermController extends AbstractController
 
 
         if ($request->request->get('languageFilter')) {
-//           dump($request->request->get('languageFilter'));
-//           die();
+
             foreach ($terms as $term) {
                 $translations = $this->getTranslationsArrayIDByTerm($term->getTranslations());
 
@@ -82,7 +81,10 @@ class TermController extends AbstractController
                         break;
                     }
                 }
-                if ($cumple) {
+                if ($cumple and $request->request->get('excludeLanguage') === null) {
+                    $termsFilter[] = $term;
+                }
+                if (!$cumple and $request->request->get('excludeLanguage') !== null) {
                     $termsFilter[] = $term;
                 }
             }
@@ -94,6 +96,7 @@ class TermController extends AbstractController
             'terms' => $termsFilter,
             'form' => $form->createView(),
             'languages' => $languages,
+            'excludeLanguage' => $request->request->get('excludeLanguage'),
             'select' => json_encode($request->request->get('languageFilter'))
         ]);
     }

@@ -32,18 +32,29 @@
         <div class="card-body">
 
             <form name="filter" method="post" id="formFilter">
-                <div class="col-4 pl-0 mb-4 form-group">
-                    <label class="text-muted" for="languageFilter">Language</label>
-                    <select name="languageFilter[]" id="languageFilter" multiple>
+                <div class="row">
+                    <div class="col-4 pl-0 mb-4 form-group">
+                        <label class="text-muted" for="languageFilter">Language</label>
+                        <select name="languageFilter[]" id="languageFilter" multiple>
 
-                        {% for language in languages %}
-                            <option value="{{ language.id }}">{{ language.name }}</option>
-                        {% endfor %}
+                            {% for language in languages %}
+                                <option value="{{ language.id }}">{{ language.name }}</option>
+                            {% endfor %}
 
-                    </select>
+                        </select>
 
 
+                    </div>
+                    <div class="col-4 pl-0 mb-4 form-group">
+                        <div class="form-check" style="top: 54%;">
+                            <input type="checkbox" value="true" class="form-check-input" id="excludeLanguage" name="excludeLanguage">
+                            <label class="form-check-label" for="excludeLanguage">Return not translated</label>
+                        </div>
+                    </div>
                 </div>
+
+
+
             </form>
 
             <table class="table table-bordered table-striped dataTable no-footer">
@@ -173,9 +184,17 @@
             {% endif %}
 
             $("#languageFilter").val(JSON.parse('{{ select | raw }}'));
+            $('#excludeLanguage').prop('checked', '{{ excludeLanguage == null ? false : true }}')
 
             $('#languageFilter').change(function () {
                 $('#formFilter').submit();
+
+            })
+            $('#excludeLanguage').change(function () {
+                if($('#languageFilter').val().length > 0){
+                    $('#formFilter').submit();
+                }
+
 
             })
 
