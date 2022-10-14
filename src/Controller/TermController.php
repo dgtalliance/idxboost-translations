@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Language;
 use App\Entity\Term;
 use App\Entity\Translation;
 use App\Form\LoadTermsType;
@@ -13,6 +14,7 @@ use App\Repository\TranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +24,21 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TermController extends AbstractController
 {
+    private $termRepository;
+    private $translationRepository;
+
+    /**
+     * TermController constructor.
+     * @param TermRepository $termRepository
+     * @param TranslationRepository $translationRepository
+     */
+    public function __construct(TermRepository $termRepository, TranslationRepository $translationRepository)
+    {
+        $this->termRepository = $termRepository;
+        $this->translationRepository = $translationRepository;
+    }
+
+
     /**
      * @Route("/", name="app_term_index", methods={"GET", "POST"})
      */
@@ -46,7 +63,8 @@ class TermController extends AbstractController
                 $file_name = 'translate' . "." . $ext;
                 $file->move("translate", $file_name);
 
-                return $this->redirectToRoute('app_term_load_terms');
+
+                return $this->redirectToRoute('app_term_load_terms', ['language' => $form['language']->getData()->getId()]);
             }
         }
 
@@ -93,6 +111,9 @@ class TermController extends AbstractController
 
     /**
      * @Route("/new", name="app_term_new", methods={"GET", "POST"})
+     * @param Request $request
+     * @param TermRepository $termRepository
+     * @return Response
      */
     public function new(Request $request, TermRepository $termRepository): Response
     {
@@ -100,9 +121,15 @@ class TermController extends AbstractController
         $form = $this->createForm(TermType::class, $term);
         $form->handleRequest($request);
 
+        if( $form->isSubmitted()){
+            $exist = $termRepository->findBy(['termKey' => $form->get('termKey')->getData()]);
+            if(isset($exist[0]) and !empty($exist[0])){
+                $form->get('termKey')->addError(new FormError('This term already exists'));
+            }
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $termRepository->add($term, true);
-
             return $this->redirectToRoute('app_term_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -224,9 +251,12 @@ class TermController extends AbstractController
     }
 
     /**
-     * @Route("/load/terms", name="app_term_load_terms", methods={"GET", "POST"})
+     * @Route("/load/terms/{language}", name="app_term_load_terms", methods={"GET", "POST"})
+     * @param EntityManagerInterface $entityManager
+     * @param Language $language
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function loadTerms(EntityManagerInterface $entityManager)
+    public function loadTerms(EntityManagerInterface $entityManager, Language $language)
     {
 
         $fichero = fopen('translate/translate.po', 'r');
@@ -243,7 +273,7 @@ class TermController extends AbstractController
                         $termKeyText = $termKeyText . $linea;
                     }
                     if ($count == 2) {
-                        $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
+                        $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager, $language);
                         $count = 1;
                         $termKeyText = $linea;
                         $termTransText = '';
@@ -266,7 +296,7 @@ class TermController extends AbstractController
                 }
             }
             if ($linea === false) {
-                $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager);
+                $this->saveNewTermLoad($termKeyText, $termTransText, $entityManager, $language);
             }
         }
 
@@ -274,9 +304,9 @@ class TermController extends AbstractController
     }
 
 
-    private function saveNewTermLoad($termKeyText, $termTransText, $entityManager)
+    private function saveNewTermLoad($termKeyText, $termTransText, $entityManager, $language)
     {
-        $term = new Term();
+
 
         $exp_regular = array();
         $exp_regular[0] = '/msgid/';
@@ -284,22 +314,42 @@ class TermController extends AbstractController
 
         $result = preg_replace($exp_regular, "", $termKeyText);
         $result = str_replace('"', '', $result);
-        if (strlen($result) > 50) {
-            $result = substr($result, 0, 50);
+
+
+        $existTerm = $this->termRepository->findBy(['termKey' => $result]);
+
+
+        if (isset($existTerm[0]) and !empty($existTerm[0])) {
+            $term = $existTerm[0];
+
+        }else{
+            $term = new Term();
+            $term->setTermKey($result);
+
+            $entityManager->persist($term);
+            $entityManager->flush();
         }
-        $term->setTermKey($result);
+
+        $existTranslation = $this->translationRepository->findBy(['termId' => $term, 'languageId' => $language]);
+
+        if (!isset($existTranslation[0]) and empty($existTranslation[0])) {
+            $translation = new Translation();
+            $translation->setTermId($term);
+            $translation->setLanguageId($language);
+
+            $exp_regular = array();
+            $exp_regular[0] = '/msgstr/';
+            $exp_regular[1] = '/\n/';
+
+            $result = preg_replace($exp_regular, "", $termTransText);
+            $result = str_replace('"', '', $result);
+            $translation->setDescription($result);
+
+            $entityManager->persist($translation);
+            $entityManager->flush();
+
+        }
 
 
-        $exp_regular = array();
-        $exp_regular[0] = '/msgstr/';
-        $exp_regular[1] = '/\n/';
-
-        $result = preg_replace($exp_regular, "", $termTransText);
-        $result = str_replace('"', '', $result);
-
-        $term->setDescription($result);
-
-        $entityManager->persist($term);
-        $entityManager->flush();
     }
 }

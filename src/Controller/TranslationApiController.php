@@ -65,7 +65,7 @@ class TranslationApiController extends AbstractController
                 if (isset($trans) && !empty($trans)) {
                     $data[$applicationTerm->getTermId()->getTermKey()] = $trans[0]->getDescription();
                 } else {
-                    $data[$applicationTerm->getTermId()->getTermKey()] = $applicationTerm->getTermId()->getDescription() ? $applicationTerm->getTermId()->getDescription() : '' ;
+                    $data[$applicationTerm->getTermId()->getTermKey()] = $applicationTerm->getTermId()->getTermKey() ;
                 }
             }
         }else{
