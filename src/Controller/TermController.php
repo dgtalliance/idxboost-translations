@@ -8,6 +8,7 @@ use App\Entity\Translation;
 use App\Form\LoadTermsType;
 use App\Form\TermType;
 use App\Form\TranslationFormType;
+use App\Repository\ApplicationRepository;
 use App\Repository\LanguageRepository;
 use App\Repository\TermRepository;
 use App\Repository\TranslationRepository;
@@ -42,9 +43,10 @@ class TermController extends AbstractController
     /**
      * @Route("/", name="app_term_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, TermRepository $termRepository, LanguageRepository $languageRepository): Response
+    public function index(Request $request, TermRepository $termRepository, LanguageRepository $languageRepository, ApplicationRepository $applicationRepository): Response
     {
         $languages = $languageRepository->findAll();
+        $applications = $applicationRepository->findAll();
         $terms = $termRepository->findBy([], ['termKey' => 'ASC']);
         $termsFilter = [];
 
@@ -70,7 +72,6 @@ class TermController extends AbstractController
 
 
         if ($request->request->get('languageFilter')) {
-
             foreach ($terms as $term) {
                 $translations = $this->getTranslationsArrayIDByTerm($term->getTranslations());
 
@@ -92,12 +93,65 @@ class TermController extends AbstractController
             $termsFilter = $terms;
         }
 
+        //returns the terms that do not have translations
+        if (!$request->request->get('languageFilter') and $request->request->get('excludeLanguage') !== null) {
+            $termsFilter = [];
+           foreach ($terms as $term){
+               if (count($term->getTranslations()) == 0){
+                   $termsFilter[] = $term;
+               }
+           }
+        }
+
+        if ($request->request->get('applicationFilter')) {
+            $termsFilterAux = [];
+
+            foreach ($termsFilter as $term) {
+                $applicationsId = $this->getApplicationsArrayIDByTerm($term->getApplicationTerms());
+
+
+
+                $cumple = true;
+                foreach ($request->request->get('applicationFilter') as $lId) {
+                    if (!in_array(intval($lId), $applicationsId)) {
+                        $cumple = false;
+                        break;
+                    }
+                }
+                if ($cumple and $request->request->get('excludeApplication') === null) {
+                    $termsFilterAux[] = $term;
+                }
+                if (!$cumple and $request->request->get('excludeApplication') !== null) {
+                    $termsFilterAux[] = $term;
+                }
+            }
+
+            $termsFilter = $termsFilterAux;
+        }
+
+
+        //returns the terms that do not have translations
+        if (!$request->request->get('applicationFilter') and $request->request->get('excludeApplication') !== null) {
+            $termsFilterAux = [];
+            foreach ($termsFilter as $term){
+                if (count($term->getApplicationTerms()) == 0){
+                    $termsFilterAux[] = $term;
+                }
+            }
+
+            $termsFilter = $termsFilterAux;
+        }
+
+
         return $this->render('term/index.html.twig', [
             'terms' => $termsFilter,
             'form' => $form->createView(),
             'languages' => $languages,
+            'applications' => $applications,
             'excludeLanguage' => $request->request->get('excludeLanguage'),
-            'select' => json_encode($request->request->get('languageFilter'))
+            'select' => json_encode($request->request->get('languageFilter')),
+            'selectApplication' => json_encode($request->request->get('applicationFilter')),
+            'excludeApplication' => $request->request->get('excludeApplication'),
         ]);
     }
 
@@ -110,6 +164,16 @@ class TermController extends AbstractController
         }
 
         return $translationsID;
+    }
+
+    public function getApplicationsArrayIDByTerm($applications)
+    {
+        $applicationsID = [];
+        foreach ($applications as $application) {
+            $applicationsID[] = $application->getApplicationId()->getId();
+        }
+
+        return $applicationsID;
     }
 
     /**

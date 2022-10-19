@@ -33,7 +33,7 @@
 
             <form name="filter" method="post" id="formFilter">
                 <div class="row">
-                    <div class="col-4 pl-0 mb-4 form-group">
+                    <div class="col-3 pl-0 mb-4 form-group">
                         <label class="text-muted" for="languageFilter">Language</label>
                         <select name="languageFilter[]" id="languageFilter" multiple>
 
@@ -42,13 +42,27 @@
                             {% endfor %}
 
                         </select>
-
-
                     </div>
-                    <div class="col-4 pl-0 mb-4 form-group">
+                    <div class="col-2 pl-0 mb-4 form-group">
                         <div class="form-check" style="top: 54%;">
                             <input type="checkbox" value="true" class="form-check-input" id="excludeLanguage" name="excludeLanguage">
                             <label class="form-check-label" for="excludeLanguage">Return not translated</label>
+                        </div>
+                    </div>
+                    <div class="col-3 pl-0 mb-4 form-group">
+                        <label class="text-muted" for="applicationFilter">Application</label>
+                        <select name="applicationFilter[]" id="applicationFilter" multiple>
+
+                            {% for application in applications %}
+                                <option value="{{ application.id }}">{{ application.name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <div class="col-3 pl-0 mb-4 form-group">
+                        <div class="form-check" style="top: 54%;">
+                            <input type="checkbox" value="true" class="form-check-input" id="excludeApplication" name="excludeApplication">
+                            <label class="form-check-label" for="excludeApplication">Return not application</label>
                         </div>
                     </div>
                 </div>
@@ -63,6 +77,7 @@
                     <th>#</th>
                     <th>Term Key</th>
                     <th>Translations</th>
+                    <th>Applications</th>
 {#                    <th>Description</th>#}
                     <th class="text-center">Actions</th>
                 </tr>
@@ -80,6 +95,22 @@
                                           style="padding: 5px;border-radius: 7px; color: #134679 !important;"
                                           onclick="window.location = '{{ path('app_term_edit_translation', {'id' : term.id, 'translationId' : t.id}) }}'">
                                    {{ t.languageId.name }}
+                                   </span>
+                                    </div>
+
+
+                                {% endfor %}
+                            </div>
+
+                        </td>
+                        <td>
+                            <div style="display: flex !important; width: 140px;  flex-wrap: wrap;">
+                                {% for t in term.getApplicationTerms %}
+                                    <div style="margin-bottom: 12px !important;">
+                                    <span class="bg-gradient-info text-bold ml-1  application-badge"
+                                          style="padding: 5px;border-radius: 7px; color: white !important;"
+                                          >
+                                   {{ t.applicationId.name }}
                                    </span>
                                     </div>
 
@@ -185,17 +216,21 @@
 
             $("#languageFilter").val(JSON.parse('{{ select | raw }}'));
             $('#excludeLanguage').prop('checked', '{{ excludeLanguage == null ? false : true }}')
+            $("#applicationFilter").val(JSON.parse('{{ selectApplication | raw }}'));
+            $('#excludeApplication').prop('checked', '{{ excludeApplication == null ? false : true }}')
 
             $('#languageFilter').change(function () {
                 $('#formFilter').submit();
-
             })
             $('#excludeLanguage').change(function () {
-                if($('#languageFilter').val().length > 0){
                     $('#formFilter').submit();
-                }
+            })
 
-
+            $('#applicationFilter').change(function () {
+                $('#formFilter').submit();
+            })
+            $('#excludeApplication').change(function () {
+                $('#formFilter').submit();
             })
 
         })
