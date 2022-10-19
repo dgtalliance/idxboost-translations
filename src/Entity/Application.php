@@ -25,6 +25,11 @@ class Application
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
+    /**
      * @ORM\OneToMany(targetEntity=ApplicationTerm::class, mappedBy="applicationId", orphanRemoval=true)
      */
     private $applicationTerms;
@@ -52,6 +57,24 @@ class Application
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param mixed $slug
+     */
+    public function setSlug($slug): void
+    {
+        $this->slug = $slug;
+    }
+
+
 
     /**
      * @return Collection<int, ApplicationTerm>

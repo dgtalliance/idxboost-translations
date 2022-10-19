@@ -13,6 +13,7 @@ class ApplicationType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('slug')
         ;
     }
 

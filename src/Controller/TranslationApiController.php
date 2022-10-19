@@ -46,21 +46,21 @@ class TranslationApiController extends AbstractController
 
 
     /**
-     * @Route("/translations_by_application_and_language/{applicationId}/{code}", name="translations_by_application_and_language")
+     * @Route("/translations_by_application_and_language/{slug}/{code}", name="translations_by_application_and_language")
      * @param EntityManagerInterface $entityManager
      * @param TranslationRepository $translationRepository
      * @param LanguageRepository $languageRepository
      * @return Response
      */
-    public function translationsByApplicationAndLanguage(EntityManagerInterface $entityManager, TranslationRepository $translationRepository,ApplicationRepository $applicationRepository,LanguageRepository $languageRepository, $applicationId = null, $code = null): Response
+    public function translationsByApplicationAndLanguage(EntityManagerInterface $entityManager, TranslationRepository $translationRepository,ApplicationRepository $applicationRepository,LanguageRepository $languageRepository, $slug = null, $code = null): Response
     {
         $data = [];
 
         $language = $languageRepository->findBy(['code' => $code]);
-        $application = $applicationRepository->find($applicationId);
+        $application = $applicationRepository->findBy(['slug' => $slug]);
 
-        if(isset($language[0]) and !empty($language[0]) and isset($application) and !empty($application)){
-            foreach ($application->getApplicationTerms() as $applicationTerm) {
+        if(isset($language[0]) and !empty($language[0]) and isset($application[0]) and !empty($application[0])){
+            foreach ($application[0]->getApplicationTerms() as $applicationTerm) {
                 $trans = $translationRepository->findBy(['termId' => $applicationTerm->getTermId(), 'languageId' => $language[0]->getId()]);
                 if (isset($trans) && !empty($trans)) {
                     $data[$applicationTerm->getTermId()->getTermKey()] = $trans[0]->getDescription();
