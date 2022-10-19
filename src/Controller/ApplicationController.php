@@ -6,9 +6,8 @@ use App\Entity\Application;
 use App\Entity\ApplicationTerm;
 use App\Entity\Term;
 use App\Form\ApplicationType;
-use App\Form\TermType;
 use App\Repository\ApplicationRepository;
-use App\Repository\TermRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +21,8 @@ class ApplicationController extends AbstractController
 {
     /**
      * @Route("/", name="app_application_index", methods={"GET"})
+     * @param ApplicationRepository $applicationRepository
+     * @return Response
      */
     public function index(ApplicationRepository $applicationRepository): Response
     {
@@ -32,6 +33,9 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/new", name="app_application_new", methods={"GET", "POST"})
+     * @param Request $request
+     * @param ApplicationRepository $applicationRepository
+     * @return Response
      */
     public function new(Request $request, ApplicationRepository $applicationRepository): Response
     {
@@ -54,6 +58,10 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="app_application_edit", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Application $application
+     * @param ApplicationRepository $applicationRepository
+     * @return Response
      */
     public function edit(Request $request, Application $application, ApplicationRepository $applicationRepository): Response
     {
@@ -74,8 +82,11 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="app_application_delete")
+     * @param Application $id
+     * @param ApplicationRepository $applicationRepository
+     * @return Response
      */
-    public function delete(Request $request, Application $id, ApplicationRepository $applicationRepository): Response
+    public function delete(Application $id, ApplicationRepository $applicationRepository): Response
     {
         $applicationRepository->remove($id, true);
         return $this->redirectToRoute('app_application_index');
@@ -83,14 +94,21 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/asociate/term/{id}", name="app_application_asociate_term_index")
+     * @param Application $id
+     * @return Response
      */
-    public function asociateTermIndex(Request $request, Application $id)
+    public function asociateTermIndex(Application $id)
     {
         return $this->render('application/asociateTermIndex.html.twig', ['application' => $id]);
     }
 
     /**
      * @Route("/asociate/term/data/{id}", name="app_application_asociate_term_data")
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param Application $id
+     * @return Response
+     * @throws Exception
      */
     public function asociateTermData(Request $request, EntityManagerInterface $em, Application $id)
     {
@@ -122,6 +140,9 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/asociate/term/remove/{id}", name="app_application_asociate_term_remove")
+     * @param EntityManagerInterface $entityManager
+     * @param ApplicationTerm $id
+     * @return Response
      */
     public function asociateTermRemove(EntityManagerInterface $entityManager, ApplicationTerm $id)
     {
@@ -132,6 +153,9 @@ class ApplicationController extends AbstractController
 
     /**
      * @Route("/term/details/{id}", name="app_application_term_details")
+     * @param EntityManagerInterface $entityManager
+     * @param Term $id
+     * @return Response
      */
     public function termDetail(EntityManagerInterface $entityManager, Term $id)
     {

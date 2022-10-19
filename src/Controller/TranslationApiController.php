@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Application;
-use App\Entity\Language;
-use App\Entity\Term;
 use App\Repository\ApplicationRepository;
 use App\Repository\LanguageRepository;
 use App\Repository\TranslationRepository;
@@ -20,13 +18,12 @@ class TranslationApiController extends AbstractController
 {
     /**
      * @Route("/translations_by_application/{id}", name="translations_by_application")
-     * @param EntityManagerInterface $entityManager
      * @param TranslationRepository $translationRepository
      * @param LanguageRepository $languageRepository
      * @param Application $id
      * @return Response
      */
-    public function index(EntityManagerInterface $entityManager, TranslationRepository $translationRepository, LanguageRepository $languageRepository, Application $id): Response
+    public function index(TranslationRepository $translationRepository, LanguageRepository $languageRepository, Application $id): Response
     {
         $data = [];
         $languages = $languageRepository->findAll();
@@ -49,7 +46,10 @@ class TranslationApiController extends AbstractController
      * @Route("/translations_by_application_and_language/{slug}/{code}", name="translations_by_application_and_language")
      * @param EntityManagerInterface $entityManager
      * @param TranslationRepository $translationRepository
+     * @param ApplicationRepository $applicationRepository
      * @param LanguageRepository $languageRepository
+     * @param null $applicationId
+     * @param null $code
      * @return Response
      */
     public function translationsByApplicationAndLanguage(EntityManagerInterface $entityManager, TranslationRepository $translationRepository,ApplicationRepository $applicationRepository,LanguageRepository $languageRepository, $slug = null, $code = null): Response

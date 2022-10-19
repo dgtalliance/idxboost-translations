@@ -13,8 +13,8 @@ use App\Repository\TermRepository;
 use App\Repository\TranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -165,8 +165,11 @@ class TermController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="app_term_delete")
+     * @param Term $id
+     * @param TermRepository $termRepository
+     * @return Response
      */
-    public function delete(Request $request, Term $id, TermRepository $termRepository): Response
+    public function delete(Term $id, TermRepository $termRepository): Response
     {
 
         $termRepository->remove($id, true);
@@ -177,6 +180,10 @@ class TermController extends AbstractController
 
     /**
      * @Route("/add/translation/{id}", name="app_term_add_translation", methods={"GET", "POST"})
+     * @param Request $request
+     * @param TranslationRepository $translationRepository
+     * @param Term $id
+     * @return Response
      */
     public function addTranslation(Request $request, TranslationRepository $translationRepository, Term $id): Response
     {
@@ -217,13 +224,17 @@ class TermController extends AbstractController
 
     /**
      * @Route("/edit/translation/{id}/{translationId}", name="app_term_edit_translation", methods={"GET", "POST"})
+     * @param Request $request
+     * @param TranslationRepository $translationRepository
+     * @param Term $id
+     * @param Translation $translationId
+     * @return Response
      */
     public function editTranslation(Request $request, TranslationRepository $translationRepository, Term $id, Translation $translationId): Response
     {
         $translation = $translationId;
         $form = $this->createForm(TranslationFormType::class, $translation);
         $form->handleRequest($request);
-
 
         if ($form->isSubmitted() && $form->isValid()) {
             $translationRepository->add($translation, true);
@@ -246,8 +257,12 @@ class TermController extends AbstractController
 
     /**
      * @Route("/remove/translation/{id}/{term}", name="app_term_remove_translation", methods={"GET", "POST"})
+     * @param TranslationRepository $translationRepository
+     * @param Translation $id
+     * @param Term $term
+     * @return Response
      */
-    public function removeTranslation(Request $request, TranslationRepository $translationRepository, Translation $id, Term $term): Response
+    public function removeTranslation(TranslationRepository $translationRepository, Translation $id, Term $term): Response
     {
         $translationRepository->remove($id, true);
         return $this->redirectToRoute('app_term_add_translation', ['id' => $term->getId()]);
@@ -257,11 +272,10 @@ class TermController extends AbstractController
      * @Route("/load/terms/{language}", name="app_term_load_terms", methods={"GET", "POST"})
      * @param EntityManagerInterface $entityManager
      * @param Language $language
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      */
     public function loadTerms(EntityManagerInterface $entityManager, Language $language)
     {
-
         $fichero = fopen('translate/translate.po', 'r');
         $termKeyText = '';
         $termTransText = '';
@@ -309,8 +323,6 @@ class TermController extends AbstractController
 
     private function saveNewTermLoad($termKeyText, $termTransText, $entityManager, $language)
     {
-
-
         $exp_regular = array();
         $exp_regular[0] = '/msgid/';
         $exp_regular[1] = '/\n/';
@@ -318,9 +330,7 @@ class TermController extends AbstractController
         $result = preg_replace($exp_regular, "", $termKeyText);
         $result = str_replace('"', '', $result);
 
-
         $existTerm = $this->termRepository->findBy(['termKey' => $result]);
-
 
         if (isset($existTerm[0]) and !empty($existTerm[0])) {
             $term = $existTerm[0];
@@ -352,7 +362,5 @@ class TermController extends AbstractController
             $entityManager->flush();
 
         }
-
-
     }
 }
