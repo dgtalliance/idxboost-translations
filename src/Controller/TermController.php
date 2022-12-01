@@ -57,6 +57,8 @@ class TermController extends AbstractController
 //            $entityManager->flush();
 //        }
 
+        dump('prueba');
+
 
         $form = $this->createForm(LoadTermsType::class);
         $form->handleRequest($request);
