@@ -51,11 +51,11 @@ class TermController extends AbstractController
         $termsFilter = [];
 
 
-        foreach ($terms as $t){
-            $t->setTermKey(trim($t->getTermKey()));
-            $entityManager->persist($t);
-            $entityManager->flush();
-        }
+//        foreach ($terms as $t){
+//            $t->setTermKey(trim($t->getTermKey()));
+//            $entityManager->persist($t);
+//            $entityManager->flush();
+//        }
 
 
         $form = $this->createForm(LoadTermsType::class);
