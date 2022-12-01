@@ -43,12 +43,19 @@ class TermController extends AbstractController
     /**
      * @Route("/", name="app_term_index", methods={"GET", "POST"})
      */
-    public function index(Request $request, TermRepository $termRepository, LanguageRepository $languageRepository, ApplicationRepository $applicationRepository): Response
+    public function index(Request $request, TermRepository $termRepository,EntityManagerInterface $entityManager,LanguageRepository $languageRepository, ApplicationRepository $applicationRepository): Response
     {
         $languages = $languageRepository->findAll();
         $applications = $applicationRepository->findAll();
         $terms = $termRepository->findBy([], ['termKey' => 'ASC']);
         $termsFilter = [];
+
+
+        foreach ($terms as $t){
+            $t->setTermKey(trim($t->getTermKey()));
+            $entityManager->persist($t);
+            $entityManager->flush();
+        }
 
 
         $form = $this->createForm(LoadTermsType::class);
@@ -393,6 +400,7 @@ class TermController extends AbstractController
 
         $result = preg_replace($exp_regular, "", $termKeyText);
         $result = str_replace('"', '', $result);
+        $result = trim($result);
 
         $existTerm = $this->termRepository->findBy(['termKey' => $result]);
 
